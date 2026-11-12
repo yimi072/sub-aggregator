@@ -9,7 +9,6 @@ does not change.
 Sources:
 - peasoft/NoMoreWalls (full)
 - barry-far/V2ray-Config (even sample, cap 250)
-- Pawdroid/Free-servers (full)
 
 Dedupe: exact duplicates by endpoint+credential; for raw-IP endpoints the
 credential is ignored, so one server listed by several sources under
