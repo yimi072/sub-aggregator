@@ -30,9 +30,6 @@ jobs:
           architecture: "x64"
           cache: "pip"
 
-      - name: Install
-        run: pip3 install pyyaml
-
       - name: Check
         run: |
           if [ -z "$GIST_PAT" ]; then
