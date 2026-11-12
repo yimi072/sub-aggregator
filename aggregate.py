@@ -5,7 +5,6 @@
 Sources (only projects verified to yield usable nodes):
   - peasoft/NoMoreWalls        (full)
   - barry-far/V2ray-Config     (even sample, capped)
-  - Pawdroid/Free-servers      (full)
 
 Junk filter: nodes pointing at loopback / private / localhost addresses
 (planted fake entries such as 127.0.0.53) are dropped.
@@ -44,7 +43,6 @@ def q(text) -> str:
 EXTRA_SOURCES = [
     ("nomorewalls", "https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt", 0),
     ("barry-far", "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_base64_Sub.txt", 250),
-    ("pawdroid", "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub", 0),
 ]
 
 ALLOWED_SCHEMES = {"ss", "vmess", "trojan", "vless", "hysteria2", "hy2", "tuic"}
