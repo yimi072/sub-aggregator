@@ -1,8 +1,8 @@
 # sub-aggregator
 
 Lean v2ray subscription aggregator. Every 2 hours it fetches three public
-free-subscription projects that proved to yield usable nodes, merges them
-with the owner's own proxies (from `clash.yaml` in the target Gist), dedupes,
+free-subscription projects that proved to yield usable nodes, merges them,
+dedupes,
 and writes the result to `v2ray.txt` in the same Gist — the subscription URL
 does not change.
 
