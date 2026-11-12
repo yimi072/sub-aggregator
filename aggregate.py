@@ -7,6 +7,8 @@ Sources (only projects verified to yield usable nodes):
   - barry-far/V2ray-Config     (even sample, capped)
   - Pawdroid/Free-servers      (full)
 
+Junk filter: nodes pointing at loopback / private / localhost addresses
+(planted fake entries such as 127.0.0.53) are dropped.
 Dedupe: exact duplicates are dropped by endpoint+credential; for raw-IP
 endpoints the credential is ignored, so the same server re-listed by
 several sources under different names/passwords collapses to one entry.
@@ -113,6 +115,27 @@ def fetch_text(url: str) -> str:
         return resp.read().decode("utf8", errors="replace")
 
 
+JUNK_HOST_RE = re.compile(
+    r"^(localhost|0\.0\.0\.0|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    r"|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|::1)$"
+)
+
+
+def link_host(link: str) -> str:
+    try:
+        if link.startswith("vmess://"):
+            data = json.loads(base64.b64decode(link[8:].split("#", 1)[0]))
+            return str(data.get("add", "")).lower()
+        return (urllib.parse.urlparse(link).hostname or "").lower()
+    except Exception:
+        return ""
+
+
+def is_junk(link: str) -> bool:
+    host = link_host(link)
+    return bool(host) and bool(JUNK_HOST_RE.match(host))
+
+
 def collect_extra_links(own_links, local_files=None):
     seen = {link_key(ln) for ln in own_links}
     extras = []
@@ -126,7 +149,11 @@ def collect_extra_links(own_links, local_files=None):
             links = parse_subscription(text)
             picked = sample_evenly(links, cap)
             added = 0
+            junk = 0
             for ln in picked:
+                if is_junk(ln):
+                    junk += 1
+                    continue
                 key = link_key(ln)
                 if key in seen:
                     continue
@@ -134,7 +161,7 @@ def collect_extra_links(own_links, local_files=None):
                 extras.append(ln)
                 added += 1
             print(
-                f"extra[{name}]: parsed={len(links)} picked={len(picked)} added={added}",
+                f"extra[{name}]: parsed={len(links)} picked={len(picked)} added={added} junk_dropped={junk}",
                 flush=True,
             )
         except Exception as e:
